@@ -92,8 +92,10 @@ each writeup page so a recruiter never dead-ends.
 
 ### 1.1 Deploy target: GitHub Pages (owner decision)
 
-- Set `base: '/[repo-name]/'` in `vite.config.js` (or `'/'` if using a
-  `[username].github.io` root repo — confirm repo name with owner).
+- Custom domain: **cdjohn.com**. `base: '/'` in `vite.config.js` (custom
+  domains serve at the site root regardless of repo name) and
+  `public/CNAME` contains `cdjohn.com` so the built `dist/CNAME` tells
+  GitHub Pages which domain to serve.
 - Deploy via GitHub Actions workflow (build + publish `dist/` to Pages). Ask
   before creating the workflow file.
 - Routing caveat: GitHub Pages serves static files only, so deep links to
@@ -592,7 +594,9 @@ Activity Log); secrets-scanning rollout writeup; container image hardening.
   link) until the owner's first real writeup.
 - **Routing:** routed page per project writeup via `react-router-dom`
   (HashRouter — confirmed, not just the default).
-- **Repo name:** `portfolio`. `vite.config.js` sets `base: '/portfolio/'`.
+- **Repo name:** `portfolio` (`https://github.com/JohnMcyber/portfolio`).
+- **Custom domain:** `cdjohn.com`. `vite.config.js` sets `base: '/'` and
+  `public/CNAME` contains `cdjohn.com` (see Section 1.1).
 - **GitHub Actions:** `.github/workflows/deploy.yml` exists — builds and
   publishes `dist/` to Pages on push to `main` (adjust the branch name in
   the workflow if the repo's default branch differs).
