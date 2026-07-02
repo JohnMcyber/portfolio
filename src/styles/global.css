@@ -1,0 +1,182 @@
+/* Web fonts named in Section 4.2. If this import ever fails to load
+   (offline, blocked), the font-family fallbacks in tokens.css kick in
+   automatically, so the site never breaks. */
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  line-height: 1.1;
+  margin: 0 0 var(--space-3);
+  color: var(--color-ink);
+}
+
+p {
+  max-width: 68ch;
+  margin: 0 0 var(--space-3);
+}
+
+a {
+  color: inherit;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+ul,
+ol {
+  padding-left: 1.2em;
+}
+
+/* Keyboard focus must always be visible (accessibility floor, Section 2). */
+a:focus-visible,
+button:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--color-ink);
+  outline-offset: 3px;
+}
+
+/* Skip link: hidden until a keyboard user tabs to it. A <button> rather
+   than an <a href="#main">, because HashRouter reads any "#..." href as
+   a route change, not an in-page jump. */
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  background: var(--color-ink);
+  color: var(--color-text-inverse);
+  padding: var(--space-2) var(--space-3);
+  border: none;
+  font: inherit;
+  cursor: pointer;
+  z-index: 100;
+}
+
+.skip-link:focus {
+  left: var(--space-3);
+  top: var(--space-3);
+}
+
+/* ---- Layout helpers ---- */
+
+.container {
+  max-width: var(--content-max-width);
+  margin-inline: auto;
+  padding-inline: var(--space-4);
+}
+
+.section {
+  padding-block: var(--space-7);
+}
+
+@media (max-width: 640px) {
+  .section {
+    padding-block: var(--space-6);
+  }
+}
+
+/* ---- Signature elements ---- */
+
+.eyebrow {
+  display: block;
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-2);
+}
+
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: var(--space-4);
+}
+
+.tag {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 2px var(--space-2);
+  margin: 0 var(--space-1) var(--space-1) 0;
+}
+
+.btn {
+  display: inline-block;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: var(--text-sm);
+  text-decoration: none;
+  border-radius: var(--radius);
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid var(--color-ink);
+  cursor: pointer;
+}
+
+.btn-primary {
+  background: var(--color-accent);
+  color: var(--color-accent-contrast);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--color-ink);
+}
+
+/* Subtle fade-in for section headers only (Section 4.4). */
+.fade-in {
+  animation: fade-in 0.4s ease-out both;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .fade-in {
+    animation: none;
+  }
+  * {
+    transition: none !important;
+  }
+}
