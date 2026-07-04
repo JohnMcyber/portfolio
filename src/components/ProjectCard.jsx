@@ -1,10 +1,11 @@
 import { Link } from 'react-router-dom'
 import SmartLink from './SmartLink.jsx'
-import { useInViewOnce } from '../hooks/useInView.js'
 
 // Card layout per Section 6.4: title -> summary -> tool tags ->
 // "Demonstrates" line -> links. Full case-study detail lives on the
-// routed writeup page, not here.
+// routed writeup page, not here. Renders fully visible immediately — no
+// scroll-triggered fade-in (owner wants these on-screen as soon as the
+// page loads, unlike the Reveal treatment used elsewhere on the site).
 //
 // The two glow spans are decorative (hover-only orb shuffle, see
 // components.css) — kept out of the normal document flow via
@@ -14,13 +15,8 @@ import { useInViewOnce } from '../hooks/useInView.js'
 // order — positioned descendants otherwise paint above normal-flow
 // content by default, not below it.
 export default function ProjectCard({ project }) {
-  const [ref, inView] = useInViewOnce({ threshold: 0.12 })
-
   return (
-    <article
-      ref={ref}
-      className={`card project-card shine-border reveal${inView ? ' in' : ''}`}
-    >
+    <article className="card project-card shine-border">
       <span className="project-card__glow project-card__glow--a" aria-hidden="true" />
       <span className="project-card__glow project-card__glow--b" aria-hidden="true" />
       <div className="project-card__content">
