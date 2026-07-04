@@ -24,7 +24,7 @@ export default function ProjectPage() {
           &larr; Back to projects
         </Link>
 
-        <span className="eyebrow">~/projects/{project.slug}</span>
+        <span className="path-label">~/projects/{project.slug}</span>
         <h1>{project.title}</h1>
         <p className="project-page__summary">{project.summary}</p>
 

@@ -71,7 +71,9 @@
    │  └─ ProjectPage.jsx    ← routed writeup page: /projects/[slug]; renders
    │                          the full case-study structure from projects.js
    └─ components/
-      ├─ Nav.jsx
+      ├─ SideNav.jsx        ← fixed left scroll-spy nav, Home page only,
+      │                       >=1280px (replaced the old top Nav.jsx bar,
+      │                       removed 2026-07 as redundant once this shipped)
       ├─ Hero.jsx           ← must state target role (Rule V2-R1 / V3-R2)
       ├─ About.jsx          ← the professional summary (Rule V3-R3)
       ├─ Projects.jsx
@@ -80,9 +82,17 @@
       ├─ LearningPath.jsx   ← certs/courses timeline (Rule V3-R6)
       ├─ Writeups.jsx       ← EXISTS BUT UNRENDERED until the owner's first
       │                       real writeup (owner decision; Rule V3-R7)
-      ├─ Contact.jsx
-      └─ Footer.jsx
+      └─ Contact.jsx
 ```
+
+**Note:** below the 1280px breakpoint there is currently no persistent nav —
+just the hero followed by a normal scroll through sections. Flagged when the
+top nav was removed; revisit if that turns out to feel wrong on mobile.
+
+**Note:** `Footer.jsx` was removed 2026-07 (owner decision — see Section 6.9).
+That also means the site has no "Last updated" stamp anywhere right now, which
+V3-M5 calls for; flagged at the time, left removed since it was a clear ask —
+revisit if the living-document signal needs a new home (e.g. a line in About).
 
 Each entry in `projects.js` carries a `slug` plus every field of the case-study
 structure (summary, goal, tools, steps, findings, recommendation, learned,
@@ -144,41 +154,64 @@ data; the owner should be able to change copy without touching JSX.
 
 ## 4. Design system
 
-> White / grey / black only for now — colors come later. All colors are tokens
-> so a future accent is a two-line change in `tokens.css`. The design must serve
-> Section 7's clarity rules: clean, uncluttered, skimmable in 30 seconds.
+> **Superseded 2026-07: dark, monochrome (black/white/grey) theme.** The
+> original monochrome phase (white bg, "colors come later") gave way to a
+> dark navy + glow-blue theme, then several color experiments (an ocean
+> teal-to-indigo palette, an electric "neon" blue) — all tried, all
+> reverted. The owner settled on: keep the dark background, drop color
+> entirely. Effects that survived the color changes (gradient headline
+> text, the glow, frosted-glass accents, the animated shine border,
+> scroll-triggered reveals) are all still here, just recolored to
+> white/grey — the *effects* were never the issue, only the hue. The
+> **underlying goal — clean, uncluttered, skimmable in 30 seconds
+> (Section 7) — still governs**, same as through every prior color pass.
+> One further tweak in this same pass: the "black/white/grey" tokens
+> still had a navy tint (bg/surface/text channels weren't equal R=G=B) —
+> that's now corrected to true neutral grey, and buttons/tags moved from
+> the 6px card radius to a fully-rounded pill shape (`--radius-pill`),
+> inspired by an AI-tool-style reference UI. Cards kept the 6px radius —
+> only buttons/chips went full pill.
 
 ### 4.1 Color tokens (`src/styles/tokens.css`)
 
 ```css
 :root {
-  /* Monochrome scale — edit here when adding color later */
-  --color-bg:             #ffffff; /* page background (white) */
-  --color-surface:        #f5f5f5; /* cards, subtle panels (light grey) */
-  --color-border:         #e2e2e2; /* hairline dividers */
-  --color-text:           #17181a; /* body text (near-black) */
-  --color-text-muted:     #6b6f76; /* secondary text, captions (mid grey) */
-  --color-text-inverse:   #ffffff; /* text on dark blocks */
-  --color-ink:            #0a0a0a; /* strongest black — headings, footer bg */
+  --color-bg:             #0a0a0a; /* page background — near-black, neutral */
+  --color-surface:        rgba(255,255,255,0.04); /* glass card fill */
+  --color-surface-solid:  #161616; /* solid panel fallback (nav/footer) */
+  --color-border:         rgba(255,255,255,0.12); /* hairline dividers */
 
-  /* Accent is intentionally monochrome for now.
-     To add color later, change ONLY these two lines. */
-  --color-accent:          #0a0a0a;
-  --color-accent-contrast: #ffffff;
+  --color-text:           #ededed; /* body text, near-white */
+  --color-text-muted:     #999999; /* secondary text, captions */
+  --color-heading:        #ffffff; /* strongest heading color (gradient top) */
+
+  --color-accent:          #ffffff; /* white — buttons, borders, markers */
+  --color-accent-soft:     #bbbbbb; /* light grey — pill fill, secondary text */
+  --color-accent-contrast: #0a0a0a; /* dark text on accent-colored fills */
+
+  --glow-strong: rgba(255,255,255,0.28);
+  --glow-soft:   rgba(255,255,255,0.14);
+  --glow-faint:  rgba(255,255,255,0.08);
 }
 ```
 
+To swap the palette again later, this file is still the only place to touch —
+every component reads these variables, nothing is hardcoded.
+
 ### 4.2 Typography
 
-The monospace face is the signature: it labels the security/CLI world without
-needing color.
+The monospace face is still the signature: it labels the security/CLI world.
 
 - **Display / headings:** `"Space Grotesk"` (fallback: system grotesque sans).
+  `h1`/`h2` render with a vertical white-to-accent-blue gradient
+  (`background-clip: text`); `h3`/`h4` stay solid `--color-heading` (white) —
+  gradient fill reads poorly at smaller card-level sizes.
 - **Body:** `"Inter"` (fallback: system UI sans).
 - **Utility / labels / metrics / code:** `"JetBrains Mono"` (fallback:
-  `ui-monospace, monospace`) — eyebrow labels, tags, stats, tool names.
+  `ui-monospace, monospace`) — kicker pills, tags, stats, tool names, the
+  `~/projects/slug` breadcrumb on writeup pages.
 
-Type scale:
+Type scale (unchanged):
 
 ```css
 --text-xs:   0.75rem;   /* mono labels, captions */
@@ -192,7 +225,8 @@ Type scale:
 
 - Headings: Space Grotesk, weight 600–700, line-height ~1.1.
 - Body: Inter, 400, line-height ~1.6, max line length ~68ch.
-- Eyebrows: mono, uppercase, letter-spacing ~0.08em, `--text-xs`, muted grey.
+- Kicker pills: mono, uppercase, `--text-xs`, `--color-accent-soft` fill,
+  `--color-accent-contrast` text, fully rounded (`border-radius: 999px`).
 
 ### 4.3 Layout & spacing
 
@@ -200,19 +234,35 @@ Type scale:
 - Spacing scale: `--space-1: 4px; --space-2: 8px; --space-3: 16px;
   --space-4: 24px; --space-5: 40px; --space-6: 64px; --space-7: 96px;`
 - `--space-7` between major sections on desktop, `--space-6` on mobile.
-- Cards: `--color-surface` bg, 1px `--color-border`, 6px radius, no drop
-  shadows in the monochrome phase (borders do the separating).
+- Cards: `--color-surface` (translucent) bg + `backdrop-filter: blur(14px)`
+  for a frosted-glass feel, 1px `--color-border`, 6px radius.
 
 ### 4.4 Signature & restraint
 
-- One memorable idea only: mono eyebrow labels styled like terminal paths —
-  `~/projects`, `~/about`, `~/learning`. Everything else stays quiet.
+- Ambient glow: soft blurred blue radial-gradients fixed behind all content
+  (`body::before`, `position: fixed`, not `background-attachment: fixed` —
+  avoids known iOS Safari fixed-background jank). Static, not animated.
+- Kicker pills (light-blue, rounded) replace the old mono `~/about` eyebrow
+  labels above each section heading — same role, new shape. The mono
+  `~/projects/slug` breadcrumb survives on writeup pages (`.path-label`)
+  since it's showing an actual path, which a pill doesn't suit.
+- One animated flourish: `.shine-border` — a conic-gradient ring that
+  rotates around each project card's edge (`@property --shine-angle` +
+  `steps`-free `linear` rotation). Reserved for the three project cards
+  specifically — the centerpiece of the site (V2-R9) — not applied
+  elsewhere, so it stays a highlight rather than becoming visual noise.
 - No `01 / 02 / 03` section numbering (portfolio sections aren't a sequence).
   Exception: the **Learning Path** section may use a dated timeline, because
   chronology there carries real information (Rule V3-R6 wants progression).
-- Motion: at most a subtle fade-in on section headers, disabled under
-  `prefers-reduced-motion`. No parallax, no carousels, nothing that slows a
-  recruiter down.
+- Motion: fade-in on section headers, the typed-heading effect, and the
+  shine border are the only animations on the site — all disabled under
+  `prefers-reduced-motion`, no exceptions. No parallax, no carousels,
+  nothing that slows a recruiter down.
+- Contrast note: dark theme flips several assumptions from the old palette —
+  focus outlines and the skip-link now use `--color-accent-soft`/
+  `--color-accent` (a dark outline would be invisible on this background).
+  Any new interactive element must be checked against the dark bg, not
+  assumed safe by default.
 
 ---
 
@@ -413,9 +463,13 @@ Activity Log); secrets-scanning rollout writeup; container image hardening.
 
 ### 6.9 Footer
 
-- `© [Year] [Your Name]` · `Last updated [Month Year]` · `[GitHub] [LinkedIn]`
-- The **"Last updated"** stamp is deliberate (living-document rule, V3-M5).
-  Keep it current; a stale date signals coasting.
+> **Removed 2026-07 (owner decision).** The footer (copyright line, "Last
+> updated" stamp, GitHub/LinkedIn links) was cut entirely. This means the
+> living-document signal V3-M5 wants (a visible "last updated" date) has no
+> home on the site right now — flagged at the time; the owner can add it
+> back elsewhere (About paragraph, Contact section) if that signal still
+> matters. GitHub/LinkedIn links already live in Contact, so nothing there
+> was actually lost besides the copyright line and the date stamp.
 
 ---
 
@@ -581,7 +635,9 @@ Activity Log); secrets-scanning rollout writeup; container image hardening.
 - Keep the whole site skimmable against the 7-point scorecard (V2-R10); when
   reviewing content changes, score them mentally and flag anything below 7.
 - Everything on the page points at the AI/Cloud/DevSecOps lane (V2-R8, V3-M4).
-- Footer shows a "Last updated" date (V3-M5).
+- ~~Footer shows a "Last updated" date (V3-M5).~~ No longer true — footer was
+  removed 2026-07 (owner decision, Section 6.9). This rule is unmet until the
+  signal finds a new home.
 
 ---
 

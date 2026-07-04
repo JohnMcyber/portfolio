@@ -1,52 +1,86 @@
-/* ---- Nav ---- */
+/* ---- Side nav (scroll-spy) ---- */
+/* Hidden below 1280px: the container is 1080px max-width, so narrower
+   viewports don't have enough side margin to fit this without
+   overlapping content. Per-item tick line (no connecting track, no
+   background fill) — active item gets a longer, brighter line and
+   bold white label; everything else stays a short, muted tick. */
 
-.nav {
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  background: var(--color-bg);
-  border-bottom: 1px solid var(--color-border);
+.side-nav {
+  display: none;
+  position: fixed;
+  left: var(--space-5);
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 5;
 }
 
-.nav__inner {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: var(--space-2);
-  padding-block: var(--space-3);
+@media (min-width: 1280px) {
+  .side-nav {
+    display: block;
+  }
 }
 
-.nav__brand {
-  font-family: var(--font-mono);
-  font-weight: 500;
-  text-decoration: none;
-  color: var(--color-ink);
-}
-
-.nav__links {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-1);
+.side-nav__list {
   list-style: none;
   margin: 0;
   padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
 }
 
-.nav__link {
-  font-family: var(--font-mono);
-  font-size: var(--text-xs);
+.side-nav__link {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
   background: none;
   border: none;
-  color: var(--color-text-muted);
+  padding: 0;
   cursor: pointer;
-  padding: var(--space-1) var(--space-2);
-  border-radius: var(--radius);
+  text-align: left;
 }
 
-.nav__link:hover {
-  color: var(--color-ink);
-  background: var(--color-surface);
+.side-nav__link-line {
+  display: block;
+  width: 28px;
+  height: 2px;
+  background: var(--color-border);
+  transition: width 0.3s ease, background-color 0.3s ease;
+}
+
+.side-nav__link-label {
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-text-muted);
+  transition: color 0.3s ease;
+}
+
+.side-nav__link.is-active .side-nav__link-line {
+  width: 64px;
+  background: var(--color-heading);
+}
+
+.side-nav__link.is-active .side-nav__link-label {
+  color: var(--color-heading);
+}
+
+.side-nav__link:hover:not(.is-active) .side-nav__link-line {
+  width: 44px;
+  background: var(--color-text-muted);
+}
+
+.side-nav__link:hover:not(.is-active) .side-nav__link-label {
+  color: var(--color-text);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .side-nav__link-line,
+  .side-nav__link-label {
+    transition: none;
+  }
 }
 
 /* ---- Hero ---- */
@@ -59,7 +93,7 @@
   font-family: var(--font-mono);
   font-size: var(--text-lg);
   font-weight: 500;
-  color: var(--color-ink);
+  color: var(--color-accent-soft);
 }
 
 .hero__tagline {
@@ -81,16 +115,89 @@
   text-decoration: underline;
 }
 
-/* ---- Skills ---- */
 
-.skills__grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: var(--space-5);
+/* ---- Skills (draggable cards) + tools ticker ---- */
+/* Single-level scroller (unlike the learning-path timeline) — there's no
+   absolutely-positioned connecting line here needing the full content
+   width as its containing block, so a plain overflow-x:auto flex
+   container is enough. */
+
+.skills-scroll,
+.tools-scroll {
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  padding-block: var(--space-2);
+  -webkit-mask-image: linear-gradient(
+    90deg,
+    transparent 0,
+    #000 4%,
+    #000 96%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    90deg,
+    transparent 0,
+    #000 4%,
+    #000 96%,
+    transparent 100%
+  );
 }
 
-.skills__group h3 {
-  font-size: var(--text-base);
+.skills-scroll__track,
+.tools-scroll__track {
+  display: flex;
+  gap: var(--space-3);
+  width: max-content;
+}
+
+.skills-card {
+  display: flex;
+  flex-direction: column;
+  flex: 0 0 auto;
+  width: 280px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+  padding: var(--space-4);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.skills-card h3 {
+  font-size: var(--text-lg);
+}
+
+.tools-caption {
+  margin-top: var(--space-6);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.tool-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  flex: 0 0 auto;
+  width: 110px;
+}
+
+.tool-tile__icon {
+  width: 64px;
+  height: 64px;
+  border-radius: var(--radius);
+  border: 1px dashed var(--color-border);
+  background: var(--color-surface);
+}
+
+.tool-tile__label {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  text-align: center;
 }
 
 /* ---- Projects grid + card ---- */
@@ -99,6 +206,90 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: var(--space-4);
+}
+
+/* Hover: lift + brighten border/background (brittanychiang.com-style row
+   highlight, adapted for our already-bordered cards), plus two blurred
+   orbs that fade in and drift/shuffle continuously while hovered. */
+.project-card {
+  overflow: hidden;
+  transition: transform 0.3s ease, border-color 0.3s ease,
+    background-color 0.3s ease;
+}
+
+.project-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--color-accent);
+  background-color: rgba(255, 255, 255, 0.06);
+}
+
+.project-card__content {
+  position: relative;
+  z-index: 1;
+  /* flex column (not default block flow) so each child — heading,
+     paragraph, tags, etc. — gets a layout slot sized off its actual
+     wrapped-text height. The title wrapping to 2 lines was overlapping
+     the summary paragraph below it without this. */
+  display: flex;
+  flex-direction: column;
+}
+
+.project-card__glow {
+  position: absolute;
+  z-index: 0;
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  filter: blur(50px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+
+.project-card__glow--a {
+  top: -70px;
+  left: -70px;
+  background: var(--glow-strong);
+}
+
+.project-card__glow--b {
+  bottom: -70px;
+  right: -70px;
+  background: var(--glow-faint);
+}
+
+.project-card:hover .project-card__glow {
+  opacity: 1;
+  animation: card-glow-shuffle 6s ease-in-out infinite;
+}
+
+.project-card:hover .project-card__glow--b {
+  animation-delay: -3s;
+}
+
+@keyframes card-glow-shuffle {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  25% {
+    transform: translate(24px, -18px);
+  }
+  50% {
+    transform: translate(-18px, 12px);
+  }
+  75% {
+    transform: translate(14px, 18px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .project-card:hover {
+    transform: none;
+  }
+  .project-card:hover .project-card__glow {
+    animation: none;
+  }
 }
 
 .project-card__demonstrates {
@@ -114,33 +305,232 @@
   margin-top: var(--space-3);
 }
 
-/* ---- Learning path timeline ---- */
+/* ---- Draggable horizontal scrollers (project marquee, learning path) ---- */
+
+.drag-scroll {
+  cursor: grab;
+  scroll-behavior: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.drag-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.drag-scroll.is-dragging {
+  cursor: grabbing;
+  user-select: none;
+}
+
+/* ---- Project marquee (decorative placeholder strip) ---- */
+
+.marquee-wrap {
+  margin-top: var(--space-6);
+}
+
+.marquee-caption {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: var(--space-3);
+}
+
+.marquee {
+  display: flex;
+  gap: var(--space-3);
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  padding-block: var(--space-2);
+  -webkit-mask-image: linear-gradient(
+    90deg,
+    transparent 0,
+    #000 8%,
+    #000 92%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    90deg,
+    transparent 0,
+    #000 8%,
+    #000 92%,
+    transparent 100%
+  );
+}
+
+.marquee__card {
+  display: flex;
+  flex-direction: column;
+  flex: 0 0 auto;
+  width: 220px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+  padding: var(--space-3);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.marquee__card p {
+  margin: var(--space-2) 0 0;
+  font-size: var(--text-sm);
+  max-width: none;
+  color: var(--color-text-muted);
+}
+
+/* ---- Learning path timeline (horizontal, drag-to-scroll) ---- */
+/* SaaS-changelog-style timeline: connecting line, a glowing dot per
+   milestone, one glass card per entry. Status is read from both the
+   dot's style AND the text label (not color alone), so it doesn't rely
+   on color perception.
+
+   Two-level structure (.timeline outer viewport + .timeline__track
+   inner content) rather than one element: the connecting line is an
+   absolutely-positioned child sized to span left:0/right:0 of its
+   containing block. If that containing block were the outer scrolling
+   viewport (whose own box stays clipped to the visible width), the line
+   would only span the initially-visible items and not follow the ones
+   scrolled into view. Making .timeline__track (which sizes to its full
+   flex content via width:max-content, wider than the viewport) the
+   containing block instead means the line correctly spans every item
+   regardless of scroll position. */
+
+.timeline-hint {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: var(--space-3);
+}
 
 .timeline {
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  padding-bottom: var(--space-3);
+  -webkit-mask-image: linear-gradient(
+    90deg,
+    transparent 0,
+    #000 4%,
+    #000 96%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    90deg,
+    transparent 0,
+    #000 4%,
+    #000 96%,
+    transparent 100%
+  );
+}
+
+.timeline__track {
+  position: relative;
   list-style: none;
   margin: 0;
-  padding: 0;
-  border-left: 2px solid var(--color-border);
+  padding: var(--space-5) var(--space-2) 0;
+  display: flex;
+  gap: var(--space-5);
+  width: max-content;
+}
+
+.timeline__track::before {
+  content: '';
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  top: calc(var(--space-5) + 6px);
+  height: 2px;
+  background: var(--color-border);
 }
 
 .timeline__item {
+  position: relative;
+  flex: 0 0 auto;
+  width: 240px;
+}
+
+.timeline__marker {
+  position: absolute;
+  left: 0;
+  top: -22px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--color-surface-solid);
+  border: 2px solid var(--color-border);
+}
+
+.timeline__item--completed .timeline__marker {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  box-shadow: 0 0 12px var(--glow-strong);
+}
+
+.timeline__item--in-progress .timeline__marker {
+  background: var(--color-bg);
+  border-color: var(--color-accent);
+  animation: timeline-pulse 1.8s ease-in-out infinite;
+}
+
+@keyframes timeline-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 4px var(--glow-soft);
+  }
+  50% {
+    box-shadow: 0 0 0 9px var(--glow-faint);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .timeline__item--in-progress .timeline__marker {
+    animation: none;
+    box-shadow: 0 0 0 4px var(--glow-soft);
+  }
+}
+
+.timeline__card {
   display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-3);
-  padding: var(--space-3) 0 var(--space-3) var(--space-4);
+  flex-direction: column;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: var(--space-3) var(--space-4);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  transition: border-color 0.25s ease, background-color 0.25s ease,
+    transform 0.25s ease;
+}
+
+.timeline__card:hover {
+  border-color: var(--color-accent-soft);
+  background-color: rgba(255, 255, 255, 0.07);
+  transform: translateY(-2px);
 }
 
 .timeline__date {
-  flex-shrink: 0;
-  align-self: flex-start;
+  display: block;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--color-accent-soft);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: var(--space-1);
 }
 
 .timeline__title {
   margin: 0;
   font-weight: 600;
+  color: var(--color-heading);
+  max-width: none;
 }
 
 .timeline__status {
+  display: inline-block;
+  margin-top: var(--space-1);
   font-family: var(--font-mono);
   font-size: var(--text-xs);
   color: var(--color-text-muted);
@@ -148,59 +538,27 @@
   letter-spacing: 0.06em;
 }
 
-.timeline__status--completed::before {
-  content: '✓ ';
-}
-
-.timeline__status--in-progress::before {
-  content: '… ';
-}
-
-.timeline__status--planned::before {
-  content: '– ';
-}
-
 .timeline__note {
   margin: var(--space-1) 0 0;
   color: var(--color-text-muted);
   font-size: var(--text-sm);
+  max-width: none;
 }
 
 /* ---- Contact ---- */
+
+.contact__icon {
+  width: 40px;
+  height: 40px;
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-3);
+}
 
 .contact__actions {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-3);
   margin-top: var(--space-4);
-}
-
-/* ---- Footer ---- */
-
-.footer {
-  background: var(--color-ink);
-  color: var(--color-text-inverse);
-  margin-top: var(--space-7);
-}
-
-.footer__inner {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  align-items: center;
-  gap: var(--space-3);
-  padding-block: var(--space-4);
-  font-family: var(--font-mono);
-  font-size: var(--text-xs);
-}
-
-.footer__links {
-  display: flex;
-  gap: var(--space-3);
-}
-
-.footer a {
-  text-decoration: underline;
 }
 
 /* ---- Placeholder links ---- */
@@ -246,6 +604,81 @@
   border-top: 1px solid var(--color-border);
   font-family: var(--font-mono);
   font-size: var(--text-sm);
+}
+
+/* ---- Typed heading effect ---- */
+/* Reveal is driven by real character-count state in TypedHeading.jsx, not
+   a CSS animation, so the cursor naturally sits right after whatever
+   text has been typed so far. */
+
+.typed-heading__cursor {
+  margin-left: 2px;
+  animation: typed-cursor-blink 0.8s step-end infinite;
+  /* h1/h2's gradient-text trick sets color/-webkit-text-fill-color to
+     transparent so its background shows through — that inherits into
+     this span too, making the cursor invisible unless overridden here. */
+  color: var(--color-accent-soft);
+  -webkit-text-fill-color: var(--color-accent-soft);
+  text-shadow: 0 0 4px var(--glow-neon-core), 0 0 14px var(--glow-neon-mid);
+}
+
+.typed-heading__cursor.is-hidden {
+  display: none;
+}
+
+@keyframes typed-cursor-blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .typed-heading__cursor {
+    animation: none;
+  }
+}
+
+
+/* ---- Shine border (animated light sweeping the edge) ---- */
+
+.shine-border {
+  position: relative;
+}
+
+.shine-border::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1.5px;
+  background: conic-gradient(
+    from var(--shine-angle),
+    transparent 0deg,
+    rgba(255, 255, 255, 0.9) 25deg,
+    transparent 70deg,
+    transparent 360deg
+  );
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: shine-rotate 4s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes shine-rotate {
+  to {
+    --shine-angle: 360deg;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shine-border::before {
+    animation: none;
+  }
 }
 
 /* ---- Writeups (built but unrendered until first real post) ---- */

@@ -14,6 +14,7 @@ html {
 }
 
 body {
+  position: relative;
   margin: 0;
   background: var(--color-bg);
   color: var(--color-text);
@@ -24,19 +25,48 @@ body {
 }
 
 h1,
-h2,
+h2 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  line-height: 1.1;
+  margin: 0 0 var(--space-3);
+  font-size: clamp(1.75rem, 4vw, var(--text-2xl));
+  /* White-to-grey fade, top to bottom — monochrome version of the
+     original white-to-color gradient (2 stops now, not 3: with the
+     accent tokens both light/white, a 3-stop version went white -> grey
+     -> white, which read as a mistake rather than a fade). */
+  background: linear-gradient(
+    180deg,
+    var(--color-heading) 0%,
+    var(--color-accent-soft) 100%
+  );
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  /* Soft white glow — layered drop-shadows at increasing blur radii is
+     what makes it read as a glow rather than a flat shadow. drop-shadow
+     (not text-shadow) so it follows the glyph's real alpha shape even
+     though the fill itself is transparent/clipped. */
+  filter: drop-shadow(0 0 2px var(--glow-neon-core))
+    drop-shadow(0 0 8px var(--glow-neon-wide));
+}
+
 h3,
 h4 {
   font-family: var(--font-display);
   font-weight: 600;
   line-height: 1.1;
   margin: 0 0 var(--space-3);
-  color: var(--color-ink);
+  font-size: var(--text-xl);
+  color: var(--color-heading);
+  filter: drop-shadow(0 0 5px var(--glow-neon-wide));
 }
 
 p {
   max-width: 68ch;
   margin: 0 0 var(--space-3);
+  font-size: 1.125rem;
 }
 
 a {
@@ -53,11 +83,13 @@ ol {
   padding-left: 1.2em;
 }
 
-/* Keyboard focus must always be visible (accessibility floor, Section 2). */
+/* Keyboard focus must always be visible (accessibility floor, Section 2).
+   Uses the light accent color, not --color-heading/ink, because on this
+   dark background a dark outline would be invisible. */
 a:focus-visible,
 button:focus-visible,
 [tabindex]:focus-visible {
-  outline: 2px solid var(--color-ink);
+  outline: 2px solid var(--color-accent-soft);
   outline-offset: 3px;
 }
 
@@ -68,8 +100,8 @@ button:focus-visible,
   position: absolute;
   left: -9999px;
   top: 0;
-  background: var(--color-ink);
-  color: var(--color-text-inverse);
+  background: var(--color-accent);
+  color: var(--color-accent-contrast);
   padding: var(--space-2) var(--space-3);
   border: none;
   font: inherit;
@@ -100,13 +132,27 @@ button:focus-visible,
   }
 }
 
-/* ---- Signature elements ---- */
+/* Contact is the last thing on the page now that Footer is gone — needs
+   real breathing room at the very bottom, not just the standard section
+   padding (which was designed assuming a footer would follow). */
+#contact.section {
+  padding-bottom: calc(var(--space-7) * 2);
+}
 
-.eyebrow {
+@media (max-width: 640px) {
+  #contact.section {
+    padding-bottom: calc(var(--space-6) * 2);
+  }
+}
+
+/* ---- Signature elements ---- */
+/* Section kicker pills were tried and removed; .path-label is the one
+   surviving mono label — a plain breadcrumb (e.g. "~/projects/slug") on
+   writeup pages, where an actual path is being shown. */
+
+.path-label {
   display: block;
   font-family: var(--font-mono);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
   font-size: var(--text-xs);
   color: var(--color-text-muted);
   margin-bottom: var(--space-2);
@@ -117,6 +163,8 @@ button:focus-visible,
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
   padding: var(--space-4);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
 }
 
 .tag {
@@ -124,11 +172,17 @@ button:focus-visible,
   font-family: var(--font-mono);
   font-size: var(--text-xs);
   color: var(--color-text-muted);
-  background: var(--color-bg);
+  background: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-radius: var(--radius);
-  padding: 2px var(--space-2);
+  border-radius: var(--radius-pill);
+  padding: 2px var(--space-3);
   margin: 0 var(--space-1) var(--space-1) 0;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.tag:hover {
+  color: var(--color-text);
+  border-color: var(--color-accent-soft);
 }
 
 .btn {
@@ -137,44 +191,55 @@ button:focus-visible,
   font-weight: 600;
   font-size: var(--text-sm);
   text-decoration: none;
-  border-radius: var(--radius);
-  padding: var(--space-2) var(--space-4);
-  border: 1px solid var(--color-ink);
+  border-radius: var(--radius-pill);
+  padding: var(--space-2) var(--space-5);
+  border: 1px solid var(--color-border);
   cursor: pointer;
+  transition: transform 0.2s ease, filter 0.2s ease, border-color 0.2s ease;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.12);
 }
 
 .btn-primary {
   background: var(--color-accent);
+  border-color: var(--color-accent);
   color: var(--color-accent-contrast);
 }
 
 .btn-secondary {
   background: transparent;
-  color: var(--color-ink);
+  color: var(--color-text);
 }
 
-/* Subtle fade-in for section headers only (Section 4.4). */
-.fade-in {
-  animation: fade-in 0.4s ease-out both;
+.btn-secondary:hover {
+  border-color: var(--color-accent-soft);
 }
 
-@keyframes fade-in {
-  from {
-    opacity: 0;
-    transform: translateY(6px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+/* Scroll-triggered fade-in-up (see components/Reveal.jsx). Fades content
+   up into place the first time it scrolls into view, rather than all at
+   once on page load. */
+.reveal {
+  opacity: 0;
+  transform: translateY(22px);
+  transition: opacity 0.7s cubic-bezier(0.2, 0.7, 0.2, 1),
+    transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.reveal.in {
+  opacity: 1;
+  transform: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
   }
-  .fade-in {
-    animation: none;
+  .reveal {
+    opacity: 1;
+    transform: none;
   }
   * {
     transition: none !important;

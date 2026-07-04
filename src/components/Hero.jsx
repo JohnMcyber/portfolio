@@ -1,6 +1,7 @@
 import { site } from '../data/site.js'
 import { scrollToId } from '../utils/scroll.js'
 import SmartLink from './SmartLink.jsx'
+import TypedHeading from './TypedHeading.jsx'
 
 // V2-R1 / V3-R2: the homepage must state the target role and what the
 // portfolio proves, within seconds — this is that "online handshake".
@@ -8,8 +9,7 @@ export default function Hero() {
   return (
     <section className="hero section">
       <div className="container">
-        <span className="eyebrow">~/</span>
-        <h1 className="hero__name">{site.name}</h1>
+        <TypedHeading as="h1" text={site.name} className="hero__name" />
         <p className="hero__role">Targeting {site.targetRole} roles.</p>
         <p className="hero__tagline">{site.tagline}</p>
         <div className="hero__cta">
