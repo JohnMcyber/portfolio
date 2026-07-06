@@ -2,6 +2,7 @@ import { skillGroups } from '../data/skills.js'
 import { toolShowcase } from '../data/toolShowcase.js'
 import TypedHeading from './TypedHeading.jsx'
 import Reveal from './Reveal.jsx'
+import ToolIcon from './ToolIcon.jsx'
 import { useDragScroll } from '../hooks/useDragScroll.js'
 
 // Supporting evidence only (Section 6.5) — every tag here should also be
@@ -26,7 +27,7 @@ export default function Skills() {
           className="skills-scroll drag-scroll"
           tabIndex={0}
           role="region"
-          aria-label="Skill categories — scrolls horizontally"
+          aria-label="Skill categories, scrolls horizontally"
         >
           <div className="skills-scroll__track">
             {skillGroups.map((group) => (
@@ -44,23 +45,23 @@ export default function Skills() {
           </div>
         </div>
 
-        <p className="tools-caption">Tools I use day to day</p>
+        <p className="tools-caption">Tools I use</p>
         <div
           ref={toolsRef}
           className="tools-scroll drag-scroll"
           tabIndex={0}
           role="region"
-          aria-label="Tools — decorative, scrolls horizontally"
+          aria-label="Tools, decorative, scrolls horizontally"
         >
           <div className="tools-scroll__track">
             {tools.map((tool, i) => (
               <div
                 className="tool-tile"
-                key={`${tool}-${i}`}
+                key={`${tool.name}-${i}`}
                 aria-hidden={i >= toolShowcase.length}
               >
-                <span className="tool-tile__icon" aria-hidden="true" />
-                <span className="tool-tile__label">{tool}</span>
+                <ToolIcon src={tool.icon} alt="" />
+                <span className="tool-tile__label">{tool.name}</span>
               </div>
             ))}
           </div>

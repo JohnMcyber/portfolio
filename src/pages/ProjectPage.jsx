@@ -35,7 +35,7 @@ export default function ProjectPage() {
         <ul>
           {project.tools.map((tool) => (
             <li key={tool.name}>
-              <strong>{tool.name}</strong> — {tool.why}
+              <strong>{tool.name}</strong>: {tool.why}
             </li>
           ))}
         </ul>

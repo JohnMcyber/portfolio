@@ -18,7 +18,7 @@ export default function Contact() {
           <TypedHeading as="h2" text="Let’s talk." />
           <p>
             I&rsquo;m targeting {site.targetRole} roles. Fastest way to reach
-            me is email — happy to walk through any project on a call.
+            me is email. Happy to walk through any project on a call.
           </p>
           <div className="contact__actions">
             <SmartLink href={emailHref} className="btn btn-primary">

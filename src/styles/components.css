@@ -189,8 +189,16 @@
   width: 64px;
   height: 64px;
   border-radius: var(--radius);
-  border: 1px dashed var(--color-border);
   background: var(--color-surface);
+  object-fit: contain;
+  padding: var(--space-2);
+}
+
+/* Fallback when public/icons/<name>.png doesn't exist yet (see
+   ToolIcon.jsx) — a plain <span>, not an <img>, so it needs the dashed
+   "placeholder" treatment the real logos don't. */
+.tool-tile__icon--empty {
+  border: 1px dashed var(--color-border);
 }
 
 .tool-tile__label {

@@ -3,38 +3,45 @@
 // Section 7: summary -> goal -> tools -> steps -> findings ->
 // recommendation -> learned -> demonstrates -> links.
 //
-// TODO(owner): replace every [BRACKETED] placeholder with real details.
-// Do not invent real facts (repo URLs, numbers, dates) on the owner's behalf.
+// Sourced from the owner's resume (McDonald_John_Resume). `recommendation`
+// is a drafted judgment call reasoned from the stated findings, not a
+// direct resume quote — check it reads like you. `learned` is a starting
+// draft too — that one's inherently personal, so treat it as a first pass
+// to rewrite in your own words, not a fact to verify.
+//
+// TODO(owner): add real repo/writeup/diagram links once you have them.
 export const projects = [
   {
-    slug: 'secure-by-default-cloud-deployment',
-    title: 'Secure-by-default cloud deployment',
+    slug: 'splunk-siem-detection-lab',
+    title: 'Splunk SIEM detection & monitoring lab',
     summary:
-      'I deployed a sample application to [AWS] and hardened it against the most common cloud misconfigurations — locked-down permissions, private networking, encryption, and full audit logging — then documented every decision.',
-    goal: 'Prove I can take an insecure-by-default deployment to a hardened, auditable state using infrastructure-as-code.',
+      'I deployed a working SIEM by installing Splunk Enterprise on an Ubuntu VM and forwarding Windows and Linux telemetry through Universal Forwarder and Sysmon, then wrote detection rules that caught real attack activity in testing, not just logs sitting in an index.',
+    goal: 'Prove I can stand up a functioning detection stack from scratch and tune it to actually catch attacks, not just collect logs.',
     tools: [
-      { name: 'Terraform', why: '[why this tool was used]' },
-      { name: 'AWS IAM', why: '[why this tool was used]' },
-      { name: 'CloudTrail', why: '[why this tool was used]' },
-      { name: 'Checkov', why: '[why this tool was used]' },
+      { name: 'Splunk Enterprise', why: 'Core SIEM platform for centralizing and searching logs.' },
+      { name: 'Sysmon', why: 'Rich Windows telemetry (process creation, network connections) to detect against.' },
+      { name: 'Universal Forwarder', why: 'Getting Windows and Linux logs into Splunk.' },
+      { name: 'SPL', why: 'Writing the actual detection rules.' },
     ],
     steps: [
-      'Provisioned baseline infrastructure',
-      'Scanned for misconfigurations',
-      'Prioritized findings',
-      'Remediated least-privilege IAM, network exposure, encryption, and logging',
-      'Re-scanned to confirm fixes',
+      'Installed Splunk Enterprise on an Ubuntu VM',
+      'Forwarded Windows and Linux telemetry via Universal Forwarder and Sysmon, centralizing 3+ log sources into one searchable index',
+      'Engineered SPL detection rules for brute-force, port-scan, and reconnaissance activity',
+      'Validated detections against simulated Kali Linux attacks',
+      'Built 3 operational dashboards tracking failed logins, scan attempts, and alert volume',
+      'Documented results in an incident report mapped to MITRE ATT&CK',
     ],
     findings:
-      'Started at [N] Checkov findings; the ones that mattered were [public bucket / wildcard IAM / no logging] because [impact]. I deprioritized [X] because [reason].',
+      'The detection rules alerted on 100% of simulated Kali Linux attacks during validation testing: brute-force, port-scan, and reconnaissance activity were all caught and mapped to MITRE ATT&CK techniques in the incident report.',
     recommendation:
-      '[e.g., enforce these controls as pipeline policy so drift is caught before deploy — see Project 2.]',
-    learned: '[1–2 honest sentences on what the owner learned.]',
+      'Alert volume matters as much as detection rate. The next step is tuning these rules against benign traffic to measure false-positive rate before calling any of them production-ready.',
+    learned:
+      '[TODO(owner): 1–2 honest sentences on what you took away from building this, e.g. what surprised you about tuning detections, or what was harder than expected.]',
     demonstrates: [
-      'Infrastructure-as-code',
-      'Cloud hardening',
-      'Risk prioritization',
-      'Written documentation',
+      'SIEM deployment',
+      'Detection engineering (SPL)',
+      'MITRE ATT&CK mapping',
+      'Incident documentation',
     ],
     links: {
       repo: '[repo url]',
@@ -43,75 +50,75 @@ export const projects = [
     },
   },
   {
-    slug: 'cicd-pipeline-security-gates',
-    title: 'CI/CD pipeline with security gates',
+    slug: 'ot-ics-intrusion-detection-lab',
+    title: 'OT/ICS network intrusion detection lab',
     summary:
-      'I built a GitHub Actions pipeline that automatically blocks vulnerable code, dependencies, and misconfigured infrastructure before it can merge — then wrote up how I tuned it to avoid noise.',
-    goal: 'Show I can automate security checks developers will actually keep.',
+      'I stood up an OT/ICS test environment with OpenPLC and SCADA components, replayed real industrial-protocol attack traffic, and tuned Suricata and Zeek IDS rules until they caught it, because industrial systems can’t run endpoint agents and can’t just be patched.',
+    goal: 'Show I can secure environments where you can’t install a traditional agent: passive detection only.',
     tools: [
-      { name: 'GitHub Actions', why: '[why this tool was used]' },
-      { name: 'Semgrep', why: 'SAST — [why this tool was used]' },
-      { name: 'Trivy', why: 'Dependency scanning — [why this tool was used]' },
-      { name: 'Checkov', why: 'IaC scanning — [why this tool was used]' },
+      { name: 'OpenPLC', why: 'Simulating a real PLC/SCADA target.' },
+      { name: 'tcpreplay', why: 'Safely replaying industrial-protocol (Modbus, DNP3) attack traffic without touching live systems.' },
+      { name: 'Suricata', why: 'Signature-based IDS for the OT network.' },
+      { name: 'Zeek', why: 'Protocol-level anomaly detection.' },
     ],
     steps: [
-      'Built the pipeline',
-      'Seeded known-vulnerable code',
-      'Verified gates fail the build',
-      'Tuned rules to reduce noise',
-      'Documented the triage workflow',
+      'Stood up an OT/ICS test environment using OpenPLC and SCADA components',
+      'Replayed industrial-protocol traffic (Modbus, DNP3) with tcpreplay to generate realistic attack data',
+      'Authored and tuned Suricata and Zeek IDS rules',
+      'Measured alert fire rates against known-malicious ICS PCAPs',
+      'Iteratively refined signatures to eliminate missed detections',
     ],
     findings:
-      'The pipeline caught [example vuln]; the noisiest rule was [X], which I [suppressed/tuned] because [reason].',
+      'Initial signatures missed some PLC scanning and protocol-anomaly activity; iterating against known-malicious ICS PCAPs closed those gaps and improved detection coverage.',
     recommendation:
-      '[e.g., start with blocking on critical/high only and ratchet up, so teams don’t bypass the gate.]',
-    learned: '[...]',
+      'Passive monitoring is the right default for OT. The next test worth running is measuring false-positive rate against a week of normal production-like traffic, since ICS environments punish noisy alerts even harder than IT ones.',
+    learned:
+      '[TODO(owner): 1–2 honest sentences on what you took away, e.g. what made OT detection different from the IT-focused SIEM work above.]',
     demonstrates: [
-      'DevSecOps automation',
-      'SAST/SCA/IaC scanning',
-      'Judgment about signal vs. noise',
-      'Clear technical writing',
+      'OT/ICS security',
+      'Passive network intrusion detection',
+      'IDS signature tuning',
+      'Industrial protocol analysis',
     ],
     links: {
       repo: '[repo url]',
-      writeup: '[sample failed run url]',
-      diagram: '[writeup url]',
+      writeup: '[writeup url]',
+      diagram: '[architecture diagram url]',
     },
   },
   {
-    slug: 'llm-threat-model-guardrails',
-    title: 'LLM application threat model & guardrails',
+    slug: 'aws-devsecops-misconfiguration-detection',
+    title: 'AWS DevSecOps misconfiguration detection',
     summary:
-      'I threat-modeled a small LLM-powered app against the OWASP LLM Top 10, tested it with real prompt-injection payloads, and added input/output guardrails — documenting what they blocked and what risk remains.',
-    goal: 'Show I can apply structured security thinking to AI systems, not just traditional infrastructure.',
+      'I scanned Terraform infrastructure-as-code for AWS with Checkov, then remediated the SSH, S3, versioning, and encryption misconfigurations it found, taking secure-scan results from 10 of 19 passing checks to 17 of 23.',
+    goal: 'Prove I can take insecure-by-default infrastructure-as-code to a hardened, auditable state, and document why each fix mattered.',
     tools: [
-      { name: 'Python', why: '[why this tool was used]' },
-      { name: 'OWASP LLM Top 10', why: '[why this framework was used]' },
-      { name: 'STRIDE', why: '[why this framework was used]' },
+      { name: 'Terraform', why: 'The infrastructure-as-code being scanned and fixed.' },
+      { name: 'Checkov', why: 'Static analysis for AWS misconfigurations.' },
+      { name: 'AWS', why: 'Target cloud platform (IAM, S3, and related services).' },
     ],
     steps: [
-      'Built/chose the target app',
-      'Mapped threats',
-      'Wrote injection test cases',
-      'Implemented filtering',
-      'Re-tested',
-      'Documented residual risk',
+      'Scanned baseline Terraform IaC for AWS with Checkov',
+      'Remediated SSH, S3, versioning, and encryption misconfigurations',
+      'Documented each risk and fix',
+      'Re-scanned to confirm improvement',
     ],
     findings:
-      'Blocked [X of Y] injection attempts; the ones that got through worked because [reason], which matters because [impact].',
+      'Started at 10 of 19 passing checks; after remediation, 17 of 23 passed. The fixes that mattered most were SSH exposure, S3 bucket configuration, versioning, and encryption gaps, each documented with the risk it closed.',
     recommendation:
-      '[e.g., guardrails are a layer, not a fix — pair with least-privilege tool access and output monitoring.]',
-    learned: '[...]',
+      'Enforce Checkov as a pipeline gate so these misconfigurations are caught before merge, not found by a one-off scan after the fact.',
+    learned:
+      '[TODO(owner): 1–2 honest sentences on what you took away, e.g. which misconfiguration surprised you most, or what you’d automate next.]',
     demonstrates: [
-      'AI/LLM security',
-      'Threat modeling',
-      'Adversarial testing',
-      'Risk communication',
+      'Infrastructure-as-code security',
+      'Cloud misconfiguration remediation',
+      'Checkov/IaC scanning',
+      'Risk documentation',
     ],
     links: {
       repo: '[repo url]',
-      writeup: '[threat model doc url]',
-      diagram: '[test results url]',
+      writeup: '[writeup url]',
+      diagram: '[architecture diagram url]',
     },
   },
 ]

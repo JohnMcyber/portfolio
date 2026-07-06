@@ -3,26 +3,26 @@
 // where possible.
 export const learningPath = [
   {
-    date: '[Month Year]',
-    title: '[CompTIA Security+]',
+    date: 'Mar 2026',
+    title: 'ISC2 Certified in Cybersecurity (CC)',
     status: 'completed',
-    note: 'Applied in [Project 1].',
+    note: 'Applied across the SIEM, OT/ICS, and cloud projects below.',
   },
   {
-    date: '[Month Year]',
-    title: '[Course / cert]',
+    date: 'Jun 2026',
+    title: 'AAS, Cybersecurity at LaGuardia Community College',
     status: 'completed',
-    note: '',
+    note: 'NSA-designated National Center of Academic Excellence in Cyber Defense (CAE-CD). GPA 3.69/4.0.',
   },
   {
     date: 'Now',
-    title: '[AWS Security Specialty]',
+    title: 'AI Security Research Intern (AFRL) + B.S. at St. John’s University',
     status: 'in-progress',
-    note: 'Target completion [Month Year].',
+    note: 'Applying AI/LLM security research in a national-lab setting while continuing coursework.',
   },
   {
     date: 'Next',
-    title: '[Planned course / project]',
+    title: '[Planned course / cert]',
     status: 'planned',
     note: '',
   },

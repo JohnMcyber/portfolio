@@ -24,7 +24,7 @@ export default function LearningPath() {
           className="timeline drag-scroll"
           tabIndex={0}
           role="region"
-          aria-label="Learning path timeline — scrolls horizontally"
+          aria-label="Learning path timeline, scrolls horizontally"
         >
           <ol className="timeline__track">
             {learningPath.map((entry) => (
